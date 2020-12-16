@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-#   ## General task: allow for string or int input
+#   ## General task: allow for string or int input, Add timers to delay?
+#  
 
-# In[552]:
+# In[2]:
 
 
 import random
 import numpy as np
 
 
-# In[617]:
+# In[3]:
 
 
 class Game:
@@ -36,8 +37,8 @@ class Game:
 
     def initial_deal(self):
         for i in range(2):
-            self.player.give_card(deck.deal_card())  
-            self.dealer.give_card(deck.deal_card())
+            self.player.give_card(self.deck.deal_card())  
+            self.dealer.give_card(self.deck.deal_card())
         print('\n')
         print(player)
         print(dealer.show_first())
@@ -54,7 +55,6 @@ class Game:
             
             if action == 'S':
                 score = self.player.total[np.argmin([21 - x for x in self.player.total])]
-                print(self.player)
                 print('Player finishes with score '+ str(score) + '\n')
                 self.player.total = score
                 break
@@ -83,7 +83,8 @@ class Game:
         
     def declare_winner(self):
         if self.player.state == 'bust':
-            return            
+            print('Player stack is now '+ str(self.player.stack) + '\n')
+            return
         elif (self.dealer.state == 'bust') | (self.player.total > self.dealer.total):
             print('Player wins!\n')
             self.player.receive_winnings(2 * self.pot)
@@ -92,19 +93,20 @@ class Game:
         elif self.player.total == self.dealer.total:
             print('Scores tied!\n')  
             self.player.receive_winnings(self.pot)
+        print('Player stack is now '+ str(self.player.stack) + '\n')
+            
     
     def reset_hand(self):
         self.pot = 0
         self.player.return_cards(self.deck)
         self.dealer.return_cards(self.deck)
-        self.deck.build
             
                                                     
                                     
                                                     
 
 
-# In[618]:
+# In[4]:
 
 
 class Deck: 
@@ -126,10 +128,11 @@ class Deck:
     
     def return_cards(self, returned):
         self.cards += returned
+        random.shuffle(self.cards)
         
 
 
-# In[619]:
+# In[5]:
 
 
 class Card:
@@ -141,7 +144,7 @@ class Card:
         return self.value + self.suit[0]
 
 
-# In[621]:
+# In[6]:
 
 
 # Eventually make player an extension of dealer
@@ -156,6 +159,8 @@ class Player:
     def __str__(self):
         total = self.total 
         valid = [val for val in total if val <= 21]
+        if self.state == '21':
+            return 'Player now has ' + str([str(c) for c in self.cards]) +' for a total of 21'
         if len(valid)>1:
             return 'Player now has ' + str([str(c) for c in self.cards]) +' for possible totals of ' + str(valid)
         elif len(valid) == 1:
@@ -214,7 +219,7 @@ class Player:
         self.stack += amount
 
 
-# In[622]:
+# In[7]:
 
 
 # Don't want same __str__ as player
@@ -277,7 +282,7 @@ class Dealer(Player):
         self.cards = []
 
 
-# In[626]:
+# In[8]:
 
 
 # Do all gameplay in the Game object, using methods start(), stack() etc?
@@ -303,7 +308,7 @@ while True:
     game.dealer_deal()
     game.declare_winner()
     if game.player.stack == 0:
-        print('Game over, player lost their whole stack!')
+        print('Game over, Player lost their whole stack!')
         break
 
     new_hand = ''
@@ -311,10 +316,17 @@ while True:
         new_hand = input('Play another hand? (Y/N): ')
         if new_hand in ['Y', 'N']:
             break
+        print('Please choose one of the valid options, Y or N.\n')
     if new_hand == 'N':
         print('\nPlayer final stack size: ' + str(game.player.stack))
         break
     game.reset_hand()
         
     
+
+
+# In[ ]:
+
+
+
 
