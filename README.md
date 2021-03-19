@@ -1,4 +1,3 @@
-# Basic-Games
-Working on some basic command line games for practice, particularly with OOP.
+# Blackjack
+Working on a basic game for practice.
 
-1. Blackjack
